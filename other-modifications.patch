@@ -1,0 +1,36 @@
+diff -ur '--exclude=.git' a/liveMedia/MatroskaFile.cpp b/liveMedia/MatroskaFile.cpp
+--- a/liveMedia/MatroskaFile.cpp	2025-05-04 00:39:17.945145728 +0200
++++ b/liveMedia/MatroskaFile.cpp	2025-05-04 01:09:20.402439106 +0200
+@@ -515,7 +515,7 @@
+ }
+ 
+ // The size of the largest key frame that we expect.  This determines our buffer sizes:
+-#define MAX_KEY_FRAME_SIZE 300000
++#define MAX_KEY_FRAME_SIZE 2000000
+ 
+ FramedSource* MatroskaFile
+ ::createSourceForStreaming(FramedSource* baseSource, unsigned trackNumber,
+diff -ur '--exclude=.git' a/liveMedia/RTCP.cpp b/liveMedia/RTCP.cpp
+--- a/liveMedia/RTCP.cpp	2025-05-04 00:39:18.013145448 +0200
++++ b/liveMedia/RTCP.cpp	2025-05-04 01:09:20.414439076 +0200
+@@ -429,7 +429,7 @@
+       envir() << "RTCPInstance error: Hit limit when reading incoming packet over TCP. (fNumBytesAlreadyRead ("
+ 	      << fNumBytesAlreadyRead << ") >= maxRTCPPacketSize (" << maxRTCPPacketSize
+ 	      << ")).  The remote endpoint is using a buggy implementation of RTP/RTCP-over-TCP.  Please upgrade it!\n";
+-      break;
++      exit(1);
+     }
+ 
+     unsigned numBytesRead;
+diff -ur '--exclude=.git' a/mediaServer/DynamicRTSPServer.cpp b/mediaServer/DynamicRTSPServer.cpp
+--- a/mediaServer/DynamicRTSPServer.cpp	2025-05-04 00:39:18.457143620 +0200
++++ b/mediaServer/DynamicRTSPServer.cpp	2025-05-04 01:48:38.635481290 +0200
+@@ -205,7 +205,7 @@
+     sms->addSubsession(DVVideoFileServerMediaSubsession::createNew(env, fileName, reuseSource));
+   } else if (strcmp(extension, ".mkv") == 0 || strcmp(extension, ".webm") == 0) {
+     // Assumed to be a Matroska file (note that WebM ('.webm') files are also Matroska files)
+-    OutPacketBuffer::maxSize = 300000; // allow for some possibly large VP8 or VP9 frames
++    OutPacketBuffer::maxSize = 100000; // allow for some possibly large VP8 or VP9 frames
+     NEW_SMS("Matroska video+audio+(optional)subtitles");
+ 
+     // Create a Matroska file server demultiplexor for the specified file.
