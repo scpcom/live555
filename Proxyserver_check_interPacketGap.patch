@@ -108,7 +108,7 @@ diff -pru livemedia.2017.01.26_org/liveMedia/ProxyServerMediaSession.cpp livemed
  				       verbosityLevel > 0 ? verbosityLevel-1 : verbosityLevel,
 -				       socketNumToServer);
 +				       socketNumToServer, interPacketGapMaxTime);
-   ProxyRTSPClient::sendDESCRIBE(fProxyRTSPClient);
+   fProxyRTSPClient->sendDESCRIBE();
  }
  
 @@ -243,13 +244,16 @@ UsageEnvironment& operator<<(UsageEnviro
@@ -131,10 +131,10 @@ diff -pru livemedia.2017.01.26_org/liveMedia/ProxyServerMediaSession.cpp livemed
      fOurAuthenticator = new Authenticator(username, password);
    } else {
 @@ -262,11 +266,13 @@ void ProxyRTSPClient::reset() {
-   envir().taskScheduler().unscheduleDelayedTask(fDESCRIBECommandTask); fDESCRIBECommandTask = NULL;
-   envir().taskScheduler().unscheduleDelayedTask(fSubsessionTimerTask); fSubsessionTimerTask = NULL;
-   envir().taskScheduler().unscheduleDelayedTask(fResetTask); fResetTask = NULL;
-+  envir().taskScheduler().unscheduleDelayedTask(fInterPacketGapsTask); fInterPacketGapsTask = NULL;
+   envir().taskScheduler().unscheduleDelayedTask(fDESCRIBECommandTask);
+   envir().taskScheduler().unscheduleDelayedTask(fSubsessionTimerTask);
+   envir().taskScheduler().unscheduleDelayedTask(fResetTask);
++  envir().taskScheduler().unscheduleDelayedTask(fInterPacketGapsTask);
  
    fSetupQueueHead = fSetupQueueTail = NULL;
    fNumSetupsDone = 0;
