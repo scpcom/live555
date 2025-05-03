@@ -1,7 +1,7 @@
 diff -Naur live/README.md live-new/README.md
 --- live/README.md	1970-01-01 01:00:00.000000000 +0100
 +++ live-new/README.md	2017-01-28 17:18:26.000000000 +0000
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,31 @@
 +# Build Instructions
 +
 +```bash
@@ -19,22 +19,27 @@ diff -Naur live/README.md live-new/README.md
 +
 +# Changes to Master
 +
-+See modifications.patch to see exactly what was changed compared to vanilla.
-+
 +### Buffer sizes
-+
 +OutPacketBuffer::maxSize is increased to 2,000,000 bytes which makes live555 work better with buggy IP cameras.
 +
 +### Force port re-use
-+
 +Added -DALLOW_RTSP_SERVER_PORT_REUSE=1 to force reusing existing port (e.g. when restarting the proxy). Please ensure
 +you never run multiple instances of the proxy on the same port!
++
++### Quit on TCP Errors
++liveMedia/RTCP.cpp#431 changed break to exit(1); - this ensures that live555 does not flood the screen and/or log with:
++The remote endpoint is using a buggy implementation of RTP/RTCP-over-TCP.  Please upgrade it!
++
++### Add -d option
++See Proxyserver_check_interPacketGap_2017.01.26.patch - This allows specifying a number of seconds of inactivity
++before timing out the connection.
+\ No newline at end of file
 diff -Naur live/config.linux live-new/config.linux
 --- live/config.linux	2017-01-26 11:33:01.000000000 +0000
 +++ live-new/config.linux	2017-01-28 17:19:24.000000000 +0000
 @@ -1,4 +1,4 @@
--COMPILE_OPTS =		$(INCLUDES) -I. -O2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
-+COMPILE_OPTS =		$(INCLUDES) -I. -O2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DALLOW_RTSP_SERVER_PORT_REUSE=1
+-COMPILE_OPTS =		$(INCLUDES) -I/usr/local/include -I. -O2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
++COMPILE_OPTS =		$(INCLUDES) -I/usr/local/include -I. -O2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DALLOW_RTSP_SERVER_PORT_REUSE=1
  C =			c
  C_COMPILER =		cc
  C_FLAGS =		$(COMPILE_OPTS) $(CPPFLAGS) $(CFLAGS)
